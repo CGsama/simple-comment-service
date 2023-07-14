@@ -109,10 +109,17 @@ function server(req, res) {
 		});
 	}else{
 		res.statusCode = 200;
-		res.setHeader('Content-Type', 'text/html');
-		let api = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : "https://scs.moegirl.live/";
-		res.write(fs.readFileSync('index.html').toString().replace("https://scs.moegirl.live/", api));
+		let api = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : (req.headers.host ? `https://${req.headers.host}/` : "https://scs.moegirl.live/");
+		if(req.url == "/script.js"){
+			res.setHeader('Content-Type', 'text/javascript');
+			res.write(fs.readFileSync('script.js').toString().replace("https://scs.moegirl.live/", api));
+		}else{
+			res.setHeader('Content-Type', 'text/html');
+			res.write(fs.readFileSync('index.html').toString().replace("https://scs.moegirl.live/", api));
+
+		}
 		res.end();
+
 	}
 }
 
